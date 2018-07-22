@@ -1,7 +1,4 @@
-var MonsterDataConst=require("./MonsterDataConst")
-for(var name in MonsterDataConst){
-	eval("const "+name+"=MonsterDataConst."+name);
-}
+require("./MonsterDataConst")
 require("./JavaScript")
 console.log("加载怪物函数")
 

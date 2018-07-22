@@ -1,68 +1,131 @@
-console.log("加载枚举类型")
-
-const Race={//种族
-	Human:0,//人类
-	Beast:1,//兽族
-	Dragon:2,//龙族
-	Magic:3,//魔法族
-}
-const MoveType={//移动类型
-	Walk:0,//步行
-	Swin:1,//游泳
-	Fly:2,//飞行
-}
-const Attribute={//属性
-	None:0,//无
-	Fire:1,//火
-	Ice:2,//冰
-	Thunder:3,//雷
-	Ground:4,//地
-	Sacred:5//圣
-}
-const AttackType={//攻击类型
-	Direct:0,//直接攻击
-	Indirect:1,//间接攻击
-	Bomb:2//炸弹攻击
-}
-const Feature={//特性
-	//属性防御
-	AttrDefend:0,//属性防御,不会陷入异常状态
-	FireAttrDefend:1,//火属性防御,被火属性攻击时损伤/5,被冰属性攻击时损伤*3
-	IceAttrDefend:2,//冰属性防御,被冰属性攻击时损伤/4,被火属性攻击时损伤*3
-	ThunderAttrDefend:3,//雷属性防御,被雷属性攻击时损伤/4,被火属性攻击时损伤*3
-	GroundAttrDefend:4,//地属性防御,被地属性攻击时损伤/4,被雷属性攻击时损伤*3
-	//攻击方式防御
-	DirectAtkDefend:5,//直接攻击防御,被直接攻击时损伤/2
-	IndirectAtkDefend:6,//间接攻击防御,被间接攻击时损伤/2
-	BombAtkDefend:7,//炸弹攻击防御,被炸弹攻击时损伤/5
-	//技能型
-	Break:8,//破坏,攻击召唤台时攻击*5
-	Capture:9,//占领,可占领被破坏的召唤台
-	DestoryMagic:10,//灭魔,对魔族攻击*4
-	DragonSlay:11,//屠龙,对龙族攻击*4
-	DefenceRateIgnore:12,//防御率无视,防御数值不参与计算
-	Stealth:13,//攻击前或在自身攻击范围外,不会被发现
-	//体质
-	Aquatic:14,//水生,在水上时移动力&攻击力*1.5
-	Plant:15,//植物,被冰雷地属性攻击时损伤/4,被火属性攻击时损伤*3
-	Machine:16,//机械,被火冰地属性攻击时损伤/4,被雷属性攻击时损伤*3
-	SoftBody:17,//软体,被物理间接攻击时损伤/2,被魔法攻击时损伤*2
-	//其它
-	Monosome:18,//单体,只能召唤1只
-}
-const Status={
-	Normal:0,//正常
-	SlowDown:1,//减速,通常是冰属性造成
-	Dizzy:2,//眩晕,通常是雷属性造成
-	Confuse:3,//混乱,通常是地属性造成
-}
-const MoveAttackType={//移动攻击类型,特殊规则,用于推断
+let allEnum={
+/**Race 种族
+@value Human 人类
+@value Beast 兽族
+@value Dragon 龙族
+@value Magic 魔法族
+*/
+Race:{
+	Human:0,
+	Beast:1,
+	Dragon:2,
+	Magic:3,
+},
+/**MoveType 移动类型
+@value Walk 步行
+@value Swin 游泳
+@value Fly 飞行
+*/
+MoveType:{
+	Walk:0,
+	Swin:1,
+	Fly:2,
+},
+/**Attribute 属性
+@value None 无
+@value Fire 火
+@value Ice 冰
+@value Thunder 雷
+@value Ground 地
+@value Sacred 圣
+*/
+Attribute:{
+	None:0,
+	Fire:1,
+	Ice:2,
+	Thunder:3,
+	Ground:4,
+	Sacred:5,
+},
+/**AttackType 攻击类型
+@value Direct 直接攻击
+@value Indirect 间接攻击
+@value Bomb 炸弹攻击
+*/
+AttackType:{
+	Direct:0,
+	Indirect:1,
+	Bomb:2,
+},
+/**Feature 特性
+@value AttrDefend 属性防御,不会陷入异常状态
+@value FireAttrDefend 火属性防御,被火属性攻击时损伤/5,被冰属性攻击时损伤*3
+@value IceAttrDefend 冰属性防御,被冰属性攻击时损伤/4,被火属性攻击时损伤*3
+@value ThunderAttrDefend 雷属性防御,被雷属性攻击时损伤/4,被火属性攻击时损伤*3
+@value GroundAttrDefend 地属性防御,被地属性攻击时损伤/4,被雷属性攻击时损伤*3
+@value DirectAtkDefend 直接攻击防御,被直接攻击时损伤/2
+@value IndirectAtkDefend 间接攻击防御,被间接攻击时损伤/2
+@value BombAtkDefend 炸弹攻击防御,被炸弹攻击时损伤/5
+@value Break 破坏,攻击召唤台时攻击*5
+@value Capture 占领,可占领被破坏的召唤台
+@value DestoryMagic 灭魔,对魔族攻击*4
+@value DragonSlay 屠龙,对龙族攻击*4
+@value DefenceRateIgnore 防御率无视,防御数值不参与计算
+@value Stealth 攻击前或在自身攻击范围外,不会被发现
+@value Aquatic 水生,在水上时移动力&攻击力*1.5
+@value Plant 植物,被冰雷地属性攻击时损伤/4,被火属性攻击时损伤*3
+@value Machine 机械,被火冰地属性攻击时损伤/4,被雷属性攻击时损伤*3
+@value SoftBody 软体,被物理间接攻击时损伤/2,被魔法攻击时损伤*2
+@value Monosome 单体,只能召唤1只
+*/
+Feature:{
+	AttrDefend:0,
+	FireAttrDefend:1,
+	IceAttrDefend:2,
+	ThunderAttrDefend:3,
+	GroundAttrDefend:4,
+	DirectAtkDefend:5,
+	IndirectAtkDefend:6,
+	BombAtkDefend:7,
+	Break:8,
+	Capture:9,
+	DestoryMagic:10,
+	DragonSlay:11,
+	DefenceRateIgnore:12,
+	Stealth:13,
+	Aquatic:14,
+	Plant:15,
+	Machine:16,
+	SoftBody:17,
+	Monosome:18,
+},
+/**Status 怪物状态
+@value Normal 正常
+@value SlowDown 减速,通常是冰属性造成
+@value Dizzy 眩晕,通常是雷属性造成
+@value Confuse 混乱,通常是地属性造成
+*/
+Status:{
+	Normal:0,
+	SlowDown:1,
+	Dizzy:2,
+	Confuse:3,
+},
+/**MoveAttackType 移动攻击类型,特殊规则,用于推断
+@value GroundDirect 地面直接攻击
+@value GroundIndirect 地面间接攻击
+@value Fly 飞行
+@value Others 其它
+*/
+MoveAttackType:{
 	GroundDirect:0,
 	GroundIndirect:1,
 	Fly:2,
-	Others:3
+	Others:3,
+},
+}
+//nodejs
+if(typeof(global)==="object"){
+	for(let name in allEnum){
+		eval("global."+name+"=allEnum."+name)
+	}
+}
+//cocos creator
+if(typeof(window)==="object" && typeof(window.ms)==="object"){
+	for(let name in allEnum){
+		eval("window.ms."+name+"=allEnum."+name)
+	}
 }
 
-module.exports={
-	Race,MoveType,Attribute,AttackType,Feature,Status,MoveAttackType
-}
+//cocos creator
+//if(window && window.ms){for(let name in allEnum){eval("window.ms."+name+"=cc.Enum(allEnum."+name+")")}}

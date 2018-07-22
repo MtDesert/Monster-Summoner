@@ -1,10 +1,5 @@
 var MonsterEnum=require("./MonsterEnum")
 console.log("加载怪物数据")
-//让导出属性可直接在本文件中使用(懒得写MonsterEnum)
-
-for(var name in MonsterEnum){
-	eval("window."+name+"=MonsterEnum."+name);
-}
 
 /*
 num编号number,最好不要重复

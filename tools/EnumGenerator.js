@@ -21,13 +21,13 @@ var outputFilename=argv[3];
 
 //启动文件系统打开文件
 var fs=require("fs")
-//var inputFile=fs.openSync(inputFilename,"r");
 var outputFile=fs.openSync(outputFilename,"w");
 
 var fileData=fs.readFileSync(inputFilename,"utf8");
 var allLines=fileData.split("\n");
 
 //输出过程
+fs.writeSync(outputFile,"let allEnum={\n");
 var nameCommentArray=[];
 var outputEnum=function(){
 	//开始输出注释
@@ -44,12 +44,12 @@ var outputEnum=function(){
 	for(var a=0;a<nameCommentArray.length;++a){
 		var nameComment=nameCommentArray[a];
 		if(a===0){//首行为枚举名
-			fs.writeSync(outputFile,"var "+nameComment[0]+"={\n")
+			fs.writeSync(outputFile,""+nameComment[0]+":{\n")
 		}else{
 			fs.writeSync(outputFile,"\t"+nameComment[0]+":"+(a-1).toString()+",\n")
 		}
 	}
-	fs.writeSync(outputFile,"}\n")
+	fs.writeSync(outputFile,"},\n")
 	//清理
 	nameCommentArray.splice(0,nameCommentArray.length)
 }
@@ -71,6 +71,14 @@ for(var i=0;i<allLines.length;++i){
 //再检查
 if(nameCommentArray.length>0)outputEnum()
 
+//枚举全部导出完毕
+fs.writeSync(outputFile,"}\n");
+
+//生成node导出代码
+fs.writeSync(outputFile,"//nodejs\n")
+fs.writeSync(outputFile,"if(global){for(let name in allEnum){eval(\"global.\"+name+\"=allEnum.\"+name)}}\n");
+fs.writeSync(outputFile,"//cocos creator\n")
+fs.writeSync(outputFile,"if(window && window.ms){for(let name in allEnum){eval(\"window.ms.\"+name+\"=cc.Enum(allEnum.\"+name+\")\")}}\n");
+
 //关闭文件
-//fs.closeSync(inputFile);
 fs.closeSync(outputFile);
